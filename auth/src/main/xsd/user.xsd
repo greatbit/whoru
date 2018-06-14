@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="urn:auth.whoru.greatbit.ru"
+           targetNamespace="urn:auth.whoru.greatbit.ru"
+           xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+           xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
+           jaxb:extensionBindingPrefixes="inheritance"
+           jaxb:version="2.1"
+           elementFormDefault="qualified">
+
+    <xs:element name="person" type="Person"/>
+    <xs:complexType name="Person">
+        <xs:sequence>
+            <xs:element name="id" type="xs:string"/>
+            <xs:element name="login" type="xs:string"/>
+            <xs:element name="password" type="xs:string"/>
+            <xs:element name="passwordExpirationTime" type="xs:long"/>
+            <xs:element name="firstName" type="xs:string"/>
+            <xs:element name="lastName" type="xs:string"/>
+            <xs:element name="middleName" type="xs:string"/>
+            <xs:element name="prefix" type="xs:string"/>
+            <xs:element name="suffix" type="xs:string"/>
+            <xs:element name="birthDate" type="xs:long"/>
+            <xs:element name="deleted" type="xs:boolean"/>
+            <xs:element name="confirmed" type="xs:boolean"/>
+            <xs:element name="confirmCode" type="xs:string"/>
+            <xs:element name="defaultPassword" type="xs:boolean"/>
+            <xs:element name="token" type="xs:string"/>
+            <xs:element name="gender" type="Gender" />
+            <xs:element name="active" type="xs:boolean" />
+            <xs:element name="externalIds" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="groups" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="Gender">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="M"/>
+            <xs:enumeration value="F"/>
+            <xs:enumeration value="NA"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="urn:auth.whoru.greatbit.ru"
+           targetNamespace="urn:auth.whoru.greatbit.ru"
+           xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+           xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
+           jaxb:extensionBindingPrefixes="inheritance"
+           jaxb:version="2.1"
+           elementFormDefault="qualified">
+
+    <xs:include schemaLocation="user.xsd"/>
+
+    <xs:element name="session" type="Session"/>
+    <xs:complexType name="Session">
+        <xs:annotation>
+            <xs:appinfo>
+                <inheritance:implements>
+                    java.security.Principal
+                </inheritance:implements>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="id" type="xs:string"/>
+            <xs:element name="timeout" type="xs:long"/>
+            <xs:element name="login" type="xs:string"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="roles" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="permissions" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="groups" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="person" type="Person"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
