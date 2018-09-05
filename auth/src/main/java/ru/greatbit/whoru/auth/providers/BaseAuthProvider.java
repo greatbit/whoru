@@ -15,6 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
 
 import static ru.greatbit.whoru.auth.utils.HttpUtils.getTokenValueFromHeaders;
 import static ru.greatbit.whoru.auth.utils.HttpUtils.isTokenAccessRequest;
@@ -112,5 +116,10 @@ public abstract class BaseAuthProvider implements AuthProvider {
         if (!isEmpty(retPath)) {
             response.sendRedirect(retPath);
         }
+    }
+
+    @Override
+    public URI redirectNotAuthTo(HttpServletRequest request) throws URISyntaxException, UnsupportedEncodingException {
+        return new URI("/login?retpath=" + URLEncoder.encode(request.getRequestURI(), "UTF-8"));
     }
 }

@@ -4,6 +4,9 @@ import ru.greatbit.whoru.auth.error.UnauthorizedException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public interface AuthProvider {
 
@@ -27,6 +30,10 @@ public interface AuthProvider {
      */
     Session getSession(HttpServletRequest request) throws UnauthorizedException;
 
+    /**
+     * Redirect to a URI if request not authenticated. E.g. - OAUTH login page.
+     */
+    URI redirectNotAuthTo(HttpServletRequest request) throws URISyntaxException, UnsupportedEncodingException;
 
     /**
      * Verify that username is still the same as the login within the session
