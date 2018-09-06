@@ -33,7 +33,7 @@ public interface AuthProvider {
     /**
      * Redirect to a URI if request not authenticated. E.g. - OAUTH login page.
      */
-    URI redirectNotAuthTo(HttpServletRequest request) throws URISyntaxException, UnsupportedEncodingException;
+    RedirectResponse redirectNotAuthTo(HttpServletRequest request);
 
     /**
      * Verify that username is still the same as the login within the session

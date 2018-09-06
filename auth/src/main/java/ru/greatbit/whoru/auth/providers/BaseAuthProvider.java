@@ -1,6 +1,7 @@
 package ru.greatbit.whoru.auth.providers;
 
 import ru.greatbit.whoru.auth.AuthProvider;
+import ru.greatbit.whoru.auth.RedirectResponse;
 import ru.greatbit.whoru.auth.Session;
 import ru.greatbit.whoru.auth.SessionProvider;
 import ru.greatbit.whoru.auth.error.UnauthorizedException;
@@ -119,7 +120,7 @@ public abstract class BaseAuthProvider implements AuthProvider {
     }
 
     @Override
-    public URI redirectNotAuthTo(HttpServletRequest request) throws URISyntaxException, UnsupportedEncodingException {
-        return new URI("/login?retpath=" + URLEncoder.encode(request.getRequestURI(), "UTF-8"));
+    public RedirectResponse redirectNotAuthTo(HttpServletRequest request) {
+        return new RedirectResponse("/login", "retpath");
     }
 }
