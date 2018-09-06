@@ -121,6 +121,6 @@ public abstract class BaseAuthProvider implements AuthProvider {
 
     @Override
     public RedirectResponse redirectNotAuthTo(HttpServletRequest request) {
-        return new RedirectResponse("/login", "retpath");
+        return new RedirectResponse("/login?", "retpath");
     }
 }
