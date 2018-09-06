@@ -16,10 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
 
 import static ru.greatbit.whoru.auth.utils.HttpUtils.getTokenValueFromHeaders;
 import static ru.greatbit.whoru.auth.utils.HttpUtils.isTokenAccessRequest;
