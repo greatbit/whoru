@@ -31,4 +31,12 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:element name="redirectResponse" type="RedirectResponse"/>
+    <xs:complexType name="RedirectResponse">
+        <xs:sequence>
+            <xs:element name="url" type="xs:string"/>
+            <xs:element name="retpathParamName" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
 </xs:schema>
