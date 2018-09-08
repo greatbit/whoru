@@ -12,7 +12,10 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -62,5 +65,10 @@ public class StubAuthProvider extends BaseAuthProvider {
     @Override
     public void doAuthByOnetimeToken(String token, HttpServletRequest request, HttpServletResponse response) {
         throw new NotImplementedException();
+    }
+
+    @Override
+    public Set<String> getAllGroups() {
+        return Stream.of(new String[]{"testers", "managers", "developers"}).collect(Collectors.toSet());
     }
 }
