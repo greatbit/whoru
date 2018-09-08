@@ -4,6 +4,7 @@ import ru.greatbit.whoru.auth.error.UnauthorizedException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Set;
 
 public interface AuthProvider {
 
@@ -38,5 +39,7 @@ public interface AuthProvider {
     boolean verifyLogin(HttpServletRequest request, String login);
 
     void doAuthByOnetimeToken(String token, HttpServletRequest request, HttpServletResponse response) throws Exception;
+
+    Set<String> getAllGroups();
 }
 

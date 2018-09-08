@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import static ru.greatbit.whoru.auth.utils.HttpUtils.getTokenValueFromHeaders;
 import static ru.greatbit.whoru.auth.utils.HttpUtils.isTokenAccessRequest;
@@ -118,5 +120,10 @@ public abstract class BaseAuthProvider implements AuthProvider {
     @Override
     public RedirectResponse redirectNotAuthTo(HttpServletRequest request) {
         return new RedirectResponse("/login?", "retpath");
+    }
+
+    @Override
+    public Set<String> getAllGroups() {
+        return new HashSet<>();
     }
 }
