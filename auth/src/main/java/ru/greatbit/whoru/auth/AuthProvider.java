@@ -4,16 +4,13 @@ import ru.greatbit.whoru.auth.error.UnauthorizedException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 public interface AuthProvider {
 
     /**
      * Perform authentication
      */
-    void doAuth(HttpServletRequest request, HttpServletResponse response);
+    Session doAuth(HttpServletRequest request, HttpServletResponse response);
 
     /**
      * Perform logging out

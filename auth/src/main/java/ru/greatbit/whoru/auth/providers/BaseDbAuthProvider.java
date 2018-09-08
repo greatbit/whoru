@@ -21,23 +21,23 @@ import static ru.greatbit.whoru.auth.utils.HttpUtils.isTokenAccessRequest;
 public abstract class BaseDbAuthProvider extends BaseAuthProvider{
 
     @Override
-    public void doAuth(HttpServletRequest request, HttpServletResponse response) {
+    public Session doAuth(HttpServletRequest request, HttpServletResponse response) {
         if (isTokenAccessRequest(request)) {
-            authByToken(request, response);
-            return;
+            return authByToken(request, response);
         }
 
         try {
             Cookie sid = HttpUtils.findCookie(request, HttpUtils.SESSION_ID);
             if (sid == null || !sessionProvider.sessionExists(sid.getValue())
-                    || sessionProvider.getSessionById(sid.getValue()).getPerson().getLogin() != request.getParameter(PARAM_LOGIN)) {
+                    || !sessionProvider.getSessionById(sid.getValue()).getPerson().getLogin().equals(request.getParameter(PARAM_LOGIN))) {
                 logger.info("No session found. Auth by login/password ip={}", HttpUtils.getRemoteAddr(request, IP_HEADER));
-                authByLoginPassword(request, response);
+                return authByLoginPassword(request, response);
             } else {
                 logger.info("Updating session for user with ip={}", HttpUtils.getRemoteAddr(request, IP_HEADER));
                 response.addCookie(HttpUtils.createCookie(HttpUtils.SESSION_ID, sid.getValue(), authDomain, sessionTtl));
             }
             sendRedirect(request, response);
+            return sessionProvider.getSessionById(sid.getValue());
         } catch (UnauthorizedException e){
             throw e;
         } catch (Exception e){
@@ -46,7 +46,7 @@ public abstract class BaseDbAuthProvider extends BaseAuthProvider{
         }
     }
 
-    public void authByToken(HttpServletRequest request, HttpServletResponse response) {
+    public Session authByToken(HttpServletRequest request, HttpServletResponse response) {
         String token = getTokenValueFromHeaders(request);
 
         if (!isEmpty(token)) {
@@ -61,9 +61,12 @@ public abstract class BaseDbAuthProvider extends BaseAuthProvider{
                 if (existedSession == null) {
                     Session session = new Session().withTimeout(sessionTtl).withId(token).withName(token).withPerson(person);
                     sessionProvider.addSession(session);
+                    return session;
                 }
+                return existedSession;
             }
         }
+        throw new UnauthorizedException("Empty token");
     }
 
     protected abstract Person getAdminPerson(String token);
@@ -73,7 +76,7 @@ public abstract class BaseDbAuthProvider extends BaseAuthProvider{
     protected abstract Person findPersonByLogin(String login);
 
 
-    private void authByLoginPassword(HttpServletRequest request, HttpServletResponse response) throws NoSuchAlgorithmException {
+    private Session authByLoginPassword(HttpServletRequest request, HttpServletResponse response) throws NoSuchAlgorithmException {
         final String login = request.getParameter(PARAM_LOGIN);
         final String password = request.getParameter(PARAM_PASSWORD);
 
@@ -89,7 +92,7 @@ public abstract class BaseDbAuthProvider extends BaseAuthProvider{
                 && person.isActive()
                 && getMd5(password, login).equals(person.getPassword())){
 
-            authAs(login, response, person);
+            return authAs(login, response, person);
         } else throw new UnauthorizedException("Incorrect login or password");
     }
 
@@ -102,10 +105,11 @@ public abstract class BaseDbAuthProvider extends BaseAuthProvider{
         if (existedSession == null) {
             sessionProvider.addSession(session);
             response.addCookie(HttpUtils.createCookie(HttpUtils.SESSION_ID, session.getId(), authDomain, sessionTtl));
+            return session;
         }
         else
             response.addCookie(HttpUtils.createCookie(HttpUtils.SESSION_ID, existedSession.getId(), authDomain, sessionTtl));
-        return session;
+        return existedSession;
     }
 
 

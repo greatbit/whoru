@@ -49,7 +49,7 @@ public abstract class BaseAuthProvider implements AuthProvider {
     protected String adminToken;
 
     @Override
-    public abstract void doAuth(HttpServletRequest request, HttpServletResponse response);
+    public abstract Session doAuth(HttpServletRequest request, HttpServletResponse response);
 
 
     @Override

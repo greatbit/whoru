@@ -28,7 +28,7 @@ public class StubAuthProvider extends BaseAuthProvider {
     protected String passwordProp;
 
     @Override
-    public void doAuth(HttpServletRequest request, HttpServletResponse response) {
+    public Session doAuth(HttpServletRequest request, HttpServletResponse response) {
         try {
             Cookie sid = HttpUtils.findCookie(request, HttpUtils.SESSION_ID);
             if (sid == null || !sessionProvider.sessionExists(sid.getValue())){
@@ -45,8 +45,10 @@ public class StubAuthProvider extends BaseAuthProvider {
 
                 sessionProvider.addSession(session);
                 response.addCookie(HttpUtils.createCookie(HttpUtils.SESSION_ID, session.getId(), authDomain, sessionTtl));
+                return session;
             } else {
                 response.addCookie(HttpUtils.createCookie(HttpUtils.SESSION_ID, sid.getValue(), authDomain, sessionTtl));
+                return sessionProvider.getSessionById(sid.getValue());
             }
         } catch (Exception e){
             throw new UnauthorizedException(e);
