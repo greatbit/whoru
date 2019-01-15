@@ -38,8 +38,29 @@ public interface AuthProvider {
      */
     boolean verifyLogin(HttpServletRequest request, String login);
 
+    /**
+     * A possibility to login using one-time token. E.g. - autologin link from the e-mail
+     */
     void doAuthByOnetimeToken(String token, HttpServletRequest request, HttpServletResponse response) throws Exception;
 
+    /**
+     * Get all user groups
+     */
     Set<String> getAllGroups();
+
+    /**
+     * Find groups that match the literal. Used for suggestions in text-fields.
+     */
+    Set<String> suggestGroups(String literal);
+
+    /**
+     * Get all users
+     */
+    Set<String> getAllUsers();
+
+    /**
+     * Find users that match the literal. Used for suggestions in text-fields.
+     */
+    Set<String> suggestUser(String literal);
 }
 

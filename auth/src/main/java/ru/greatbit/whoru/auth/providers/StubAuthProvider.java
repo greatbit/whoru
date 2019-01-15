@@ -14,9 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toSet;
 import static org.springframework.util.StringUtils.isEmpty;
 
 public class StubAuthProvider extends BaseAuthProvider {
@@ -69,6 +69,21 @@ public class StubAuthProvider extends BaseAuthProvider {
 
     @Override
     public Set<String> getAllGroups() {
-        return Stream.of(new String[]{"testers", "managers", "developers"}).collect(Collectors.toSet());
+        return Stream.of(new String[]{"testers", "managers", "developers"}).collect(toSet());
+    }
+
+    @Override
+    public Set<String> suggestGroups(String literal) {
+        return getAllGroups().stream().filter(group -> group.contains(literal)).collect(toSet());
+    }
+
+    @Override
+    public Set<String> getAllUsers() {
+        return Stream.of(new String[]{"walter", "tony", "margo"}).collect(toSet());
+    }
+
+    @Override
+    public Set<String> suggestUser(String literal) {
+        return getAllUsers().stream().filter(group -> group.contains(literal)).collect(toSet());
     }
 }
