@@ -1,9 +1,6 @@
 package ru.greatbit.whoru.auth.providers;
 
-import ru.greatbit.whoru.auth.AuthProvider;
-import ru.greatbit.whoru.auth.RedirectResponse;
-import ru.greatbit.whoru.auth.Session;
-import ru.greatbit.whoru.auth.SessionProvider;
+import ru.greatbit.whoru.auth.*;
 import ru.greatbit.whoru.auth.error.UnauthorizedException;
 import ru.greatbit.whoru.auth.utils.HttpUtils;
 import org.slf4j.Logger;
@@ -18,7 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
+import static ru.greatbit.utils.string.StringUtils.emptyIfNull;
 import static ru.greatbit.whoru.auth.utils.HttpUtils.getTokenValueFromHeaders;
 import static ru.greatbit.whoru.auth.utils.HttpUtils.isTokenAccessRequest;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -51,7 +50,23 @@ public abstract class BaseAuthProvider implements AuthProvider {
     protected String adminToken;
 
     @Override
-    public abstract Session doAuth(HttpServletRequest request, HttpServletResponse response);
+    public Session doAuth(HttpServletRequest request, HttpServletResponse response){
+        final String login = emptyIfNull(request.getParameter(PARAM_LOGIN));
+        final String password = emptyIfNull(request.getParameter(PARAM_PASSWORD));
+        if (login.equals(adminLogin) && password.equals(adminPassword)){
+            return new Session().withIsAdmin(true).
+                    withId(UUID.randomUUID().toString()).
+                    withLogin(adminLogin).withName(adminLogin).
+                    withPerson(
+                            new Person().withActive(true).withId(adminLogin).withFirstName(adminLogin)
+                    );
+        } else {
+            return authImpl(request, response);
+        }
+    }
+
+    public abstract Session authImpl(HttpServletRequest request, HttpServletResponse response);
+
 
 
     @Override

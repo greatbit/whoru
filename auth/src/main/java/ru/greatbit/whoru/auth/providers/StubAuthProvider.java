@@ -31,7 +31,8 @@ public class StubAuthProvider extends BaseAuthProvider {
     protected String passwordProp;
 
     @Override
-    public Session doAuth(HttpServletRequest request, HttpServletResponse response) {
+    public Session authImpl(HttpServletRequest request, HttpServletResponse response) {
+        super.doAuth(request, response);
         try {
             Cookie sid = HttpUtils.findCookie(request, HttpUtils.SESSION_ID);
             if (sid == null || !sessionProvider.sessionExists(sid.getValue())){

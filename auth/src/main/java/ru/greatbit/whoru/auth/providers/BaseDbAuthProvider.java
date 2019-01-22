@@ -21,7 +21,7 @@ import static ru.greatbit.whoru.auth.utils.HttpUtils.isTokenAccessRequest;
 public abstract class BaseDbAuthProvider extends BaseAuthProvider{
 
     @Override
-    public Session doAuth(HttpServletRequest request, HttpServletResponse response) {
+    public Session authImpl(HttpServletRequest request, HttpServletResponse response) {
         if (isTokenAccessRequest(request)) {
             return authByToken(request, response);
         }

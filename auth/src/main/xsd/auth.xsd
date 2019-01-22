@@ -28,6 +28,7 @@
             <xs:element name="permissions" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="groups" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="person" type="Person"/>
+            <xs:element name="isAdmin" type="xs:boolean"/>
         </xs:sequence>
     </xs:complexType>
 
