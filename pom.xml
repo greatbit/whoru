@@ -10,6 +10,7 @@
         <module>jaxrsws-auth</module>
         <module>hazelcast-session-provider</module>
         <module>rest-example</module>
+        <module>jira-auth-provider</module>
     </modules>
 
     <name>Who Are You</name>
@@ -63,6 +64,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>hazelcast-session-provider</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>jira-auth-provider</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
