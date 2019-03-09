@@ -41,6 +41,12 @@
             <artifactId>json</artifactId>
             <version>20160810</version>
         </dependency>
+
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
