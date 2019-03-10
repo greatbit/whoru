@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="urn:jira.providers.auth.whoru.greatbit.ru"
+           targetNamespace="urn:jira.providers.auth.whoru.greatbit.ru"
+           xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+           xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
+           jaxb:extensionBindingPrefixes="inheritance"
+           jaxb:version="2.1"
+           elementFormDefault="qualified">
+
+    <xs:element name="jiraUser" type="JiraUser"/>
+    <xs:complexType name="JiraUser">
+        <xs:sequence>
+            <xs:element name="active" type="xs:boolean"/>
+            <xs:element name="displayName" type="xs:string"/>
+            <xs:element name="emailAddress" type="xs:string"/>
+            <xs:element name="expand" type="xs:string"/>
+            <xs:element name="key" type="xs:string"/>
+            <xs:element name="location" type="xs:string"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="self" type="xs:string"/>
+            <xs:element name="timezone" type="xs:string"/>
+            <xs:element name="applicationRoles" type="ApplicationRoles"/>
+            <xs:element name="avatarUrls" type="AvatarUrls"/>
+            <xs:element name="groups" type="Groups"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ApplicationRoles">
+        <xs:sequence>
+            <xs:element name="items" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="size" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Groups">
+        <xs:sequence>
+            <xs:element name="items" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="size" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="AvatarUrls">
+        <xs:sequence>
+            <xs:element name="16x16" type="xs:string"/>
+            <xs:element name="24x24" type="xs:string"/>
+            <xs:element name="32x32" type="xs:string"/>
+            <xs:element name="48x48" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

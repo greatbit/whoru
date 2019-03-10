@@ -59,7 +59,7 @@ public abstract class BaseDbAuthProvider extends BaseAuthProvider{
             if (person != null){
                 Session existedSession = sessionProvider.getSessionById(token);
                 if (existedSession == null) {
-                    Session session = new Session().withTimeout(sessionTtl).withId(token).withName(token).withPerson(person);
+                    Session session = (Session) new Session().withTimeout(sessionTtl).withId(token).withName(token).withPerson(person);
                     sessionProvider.addSession(session);
                     return session;
                 }
@@ -100,7 +100,7 @@ public abstract class BaseDbAuthProvider extends BaseAuthProvider{
         if (person.getPasswordExpirationTime() > 0 && System.currentTimeMillis() > person.getPasswordExpirationTime()){
             throw new UnauthorizedException(format("Temporary password has expired for user %s. Please contact administrator to set a new one.", person.getLogin()));
         }
-        Session session = new Session().withId(UUID.randomUUID().toString()).withTimeout(sessionTtl).withName(login).withPerson(person);
+        Session session = (Session) new Session().withId(UUID.randomUUID().toString()).withTimeout(sessionTtl).withName(login).withPerson(person);
         Session existedSession = sessionProvider.getSessionIfExists(session);
         if (existedSession == null) {
             sessionProvider.addSession(session);

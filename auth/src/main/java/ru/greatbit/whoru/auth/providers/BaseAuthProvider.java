@@ -54,7 +54,7 @@ public abstract class BaseAuthProvider implements AuthProvider {
         final String login = emptyIfNull(request.getParameter(PARAM_LOGIN));
         final String password = emptyIfNull(request.getParameter(PARAM_PASSWORD));
         if (login.equals(adminLogin) && password.equals(adminPassword)){
-            Session adminSession = new Session().withIsAdmin(true).
+            Session adminSession = (Session) new Session().withIsAdmin(true).
                     withId(UUID.randomUUID().toString()).
                     withLogin(adminLogin).withName(adminLogin).
                     withPerson(

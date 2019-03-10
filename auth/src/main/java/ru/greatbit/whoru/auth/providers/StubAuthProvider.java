@@ -42,7 +42,7 @@ public class StubAuthProvider extends BaseAuthProvider {
                     throw new UnauthorizedException("Login and password should match");
                 }
 
-                Session session = new Session().withId(UUID.randomUUID().toString())
+                Session session = (Session) new Session().withId(UUID.randomUUID().toString())
                         .withTimeout(sessionTtl).withPerson(createPerson(login))
                         .withLogin(login);
 
