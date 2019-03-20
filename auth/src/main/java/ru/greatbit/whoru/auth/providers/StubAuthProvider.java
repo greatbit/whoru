@@ -59,7 +59,10 @@ public class StubAuthProvider extends BaseAuthProvider {
     }
 
     private Person createPerson(String login) {
-        return new Person().withId(login).withFirstName("Walter").withLastName("White").withLogin("heisenberg");
+        return new Person().withId(login).withFirstName("Walter")
+                .withLastName("White")
+                .withLogin("heisenberg")
+                .withGroups("testers");
     }
 
     @Override
@@ -79,7 +82,7 @@ public class StubAuthProvider extends BaseAuthProvider {
 
     @Override
     public Set<String> getAllUsers() {
-        return Stream.of(new String[]{"walter", "tony", "margo"}).collect(toSet());
+        return Stream.of(new String[]{"heisenberg", "tony", "margo"}).collect(toSet());
     }
 
     @Override
