@@ -2,6 +2,7 @@ package ru.greatbit.whoru.auth.providers;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.greatbit.whoru.auth.RedirectResponse;
 import ru.greatbit.whoru.auth.Session;
 import ru.greatbit.whoru.auth.error.UnauthorizedException;
 import ru.greatbit.whoru.auth.providers.jira.JiraUser;
@@ -25,17 +26,18 @@ public class JiraAuthProvider extends BaseAuthProvider {
 
     @Override
     public Session authImpl(HttpServletRequest request, HttpServletResponse response) {
-        String redirectUrl = jiraUiEndpoint + "/login.jsp";
-        String retpath = request.getParameter("retpath");
-        if (retpath != null){
-            redirectUrl+="?os_destination=" + retpath;
-        }
         try {
-            response.sendRedirect(redirectUrl);
+            response.sendRedirect(getLoginUrl(request));
         } catch (IOException e) {
+            logger.warn("Unable to send redirect to Jira login page", e);
             return null;
         }
         return null;
+    }
+
+    @Override
+    public RedirectResponse redirectNotAuthTo(HttpServletRequest request) {
+        return new RedirectResponse(getLoginUrl(request), "retpath");
     }
 
     @Override
@@ -69,5 +71,14 @@ public class JiraAuthProvider extends BaseAuthProvider {
     @Override
     public Set<String> suggestUser(String literal) {
         return null;
+    }
+
+    private String getLoginUrl(HttpServletRequest request){
+        String redirectUrl = jiraUiEndpoint + "/login.jsp";
+        String retpath = request.getParameter("retpath");
+        if (retpath != null){
+            redirectUrl+="?os_destination=" + retpath;
+        }
+        return redirectUrl;
     }
 }
