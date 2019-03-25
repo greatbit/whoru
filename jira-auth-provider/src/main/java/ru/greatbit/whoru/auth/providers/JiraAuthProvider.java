@@ -45,7 +45,7 @@ public class JiraAuthProvider extends BaseAuthProvider {
         JiraUser jiraUser;
         try {
             jiraUser = HttpClientBuilder.builder(jiraApiEndpoint, jiraApiTimeout).build().
-                    create(JiraRestAuthClient.class).getSelfUser();
+                    create(JiraRestAuthClient.class).getSelfUser().execute().body();
         } catch (Exception e){
             logger.warn("Couldn't get users session from Jira", e);
             return false;
