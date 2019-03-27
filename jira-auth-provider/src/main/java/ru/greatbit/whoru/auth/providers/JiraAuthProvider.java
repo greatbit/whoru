@@ -44,7 +44,7 @@ public class JiraAuthProvider extends BaseAuthProvider {
     public boolean isAuthenticated(HttpServletRequest request) throws UnauthorizedException {
         JiraUser jiraUser;
         try {
-            jiraUser = HttpClientBuilder.builder(jiraApiEndpoint, jiraApiTimeout).build().
+            jiraUser = HttpClientBuilder.builder(jiraApiEndpoint, jiraApiTimeout, request).build().
                     create(JiraRestAuthClient.class).getSelfUser().execute().body();
         } catch (Exception e){
             logger.warn("Couldn't get users session from Jira", e);
