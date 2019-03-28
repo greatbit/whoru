@@ -64,7 +64,9 @@ public abstract class BaseAuthProvider implements AuthProvider {
             response.addCookie(HttpUtils.createCookie(HttpUtils.SESSION_ID, adminSession.getId(), authDomain, sessionTtl));
             return adminSession;
         } else {
-            return authImpl(request, response);
+            Session session = authImpl(request, response);
+            response.addCookie(HttpUtils.createCookie(HttpUtils.SESSION_ID, session.getId(), authDomain, sessionTtl));
+            return session;
         }
     }
 
@@ -141,7 +143,7 @@ public abstract class BaseAuthProvider implements AuthProvider {
     }
 
     @Override
-    public Set<String> getAllGroups() {
+    public Set<String> getAllGroups(HttpServletRequest request) {
         return new HashSet<>();
     }
 }

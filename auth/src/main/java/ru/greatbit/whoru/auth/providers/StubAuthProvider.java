@@ -71,22 +71,22 @@ public class StubAuthProvider extends BaseAuthProvider {
     }
 
     @Override
-    public Set<String> getAllGroups() {
+    public Set<String> getAllGroups(HttpServletRequest request) {
         return Stream.of(new String[]{"testers", "managers", "developers"}).collect(toSet());
     }
 
     @Override
-    public Set<String> suggestGroups(String literal) {
-        return getAllGroups().stream().filter(group -> group.contains(literal)).collect(toSet());
+    public Set<String> suggestGroups(HttpServletRequest request, String literal) {
+        return getAllGroups(request).stream().filter(group -> group.contains(literal)).collect(toSet());
     }
 
     @Override
-    public Set<String> getAllUsers() {
+    public Set<String> getAllUsers(HttpServletRequest request) {
         return Stream.of(new String[]{"heisenberg", "tony", "margo"}).collect(toSet());
     }
 
     @Override
-    public Set<String> suggestUser(String literal) {
-        return getAllUsers().stream().filter(group -> group.contains(literal)).collect(toSet());
+    public Set<String> suggestUser(HttpServletRequest request, String literal) {
+        return getAllUsers(request).stream().filter(group -> group.contains(literal)).collect(toSet());
     }
 }

@@ -46,21 +46,21 @@ public interface AuthProvider {
     /**
      * Get all user groups
      */
-    Set<String> getAllGroups();
+    Set<String> getAllGroups(HttpServletRequest request);
 
     /**
      * Find groups that match the literal. Used for suggestions in text-fields.
      */
-    Set<String> suggestGroups(String literal);
+    Set<String> suggestGroups(HttpServletRequest request, String literal);
 
     /**
      * Get all users
      */
-    Set<String> getAllUsers();
+    Set<String> getAllUsers(HttpServletRequest request);
 
     /**
      * Find users that match the literal. Used for suggestions in text-fields.
      */
-    Set<String> suggestUser(String literal);
+    Set<String> suggestUser(HttpServletRequest request, String literal);
 }
 
