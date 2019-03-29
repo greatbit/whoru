@@ -10,8 +10,8 @@
 
     <xs:include schemaLocation="user.xsd"/>
 
-    <xs:element name="session" type="Session"/>
-    <xs:complexType name="Session">
+    <xs:element name="session" type="BaseSession"/>
+    <xs:complexType name="BaseSession">
         <xs:annotation>
             <xs:appinfo>
                 <inheritance:implements>
@@ -24,9 +24,7 @@
             <xs:element name="timeout" type="xs:long"/>
             <xs:element name="login" type="xs:string"/>
             <xs:element name="name" type="xs:string"/>
-            <xs:element name="roles" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="permissions" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="groups" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="person" type="Person"/>
             <xs:element name="isAdmin" type="xs:boolean"/>
         </xs:sequence>

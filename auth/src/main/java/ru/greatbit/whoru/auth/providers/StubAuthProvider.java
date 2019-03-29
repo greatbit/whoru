@@ -42,7 +42,7 @@ public class StubAuthProvider extends BaseAuthProvider {
                     throw new UnauthorizedException("Login and password should match");
                 }
 
-                Session session = new Session().withId(UUID.randomUUID().toString())
+                Session session = (Session) new Session().withId(UUID.randomUUID().toString())
                         .withTimeout(sessionTtl).withPerson(createPerson(login))
                         .withLogin(login);
 
@@ -59,7 +59,10 @@ public class StubAuthProvider extends BaseAuthProvider {
     }
 
     private Person createPerson(String login) {
-        return new Person().withId(login).withFirstName("Walter").withLastName("White").withLogin("heisenberg");
+        return new Person().withId(login).withFirstName("Walter")
+                .withLastName("White")
+                .withLogin("heisenberg")
+                .withGroups("testers");
     }
 
     @Override
@@ -68,22 +71,22 @@ public class StubAuthProvider extends BaseAuthProvider {
     }
 
     @Override
-    public Set<String> getAllGroups() {
+    public Set<String> getAllGroups(HttpServletRequest request) {
         return Stream.of(new String[]{"testers", "managers", "developers"}).collect(toSet());
     }
 
     @Override
-    public Set<String> suggestGroups(String literal) {
-        return getAllGroups().stream().filter(group -> group.contains(literal)).collect(toSet());
+    public Set<String> suggestGroups(HttpServletRequest request, String literal) {
+        return getAllGroups(request).stream().filter(group -> group.contains(literal)).collect(toSet());
     }
 
     @Override
-    public Set<String> getAllUsers() {
-        return Stream.of(new String[]{"walter", "tony", "margo"}).collect(toSet());
+    public Set<String> getAllUsers(HttpServletRequest request) {
+        return Stream.of(new String[]{"heisenberg", "tony", "margo"}).collect(toSet());
     }
 
     @Override
-    public Set<String> suggestUser(String literal) {
-        return getAllUsers().stream().filter(group -> group.contains(literal)).collect(toSet());
+    public Set<String> suggestUser(HttpServletRequest request, String literal) {
+        return getAllUsers(request).stream().filter(group -> group.contains(literal)).collect(toSet());
     }
 }

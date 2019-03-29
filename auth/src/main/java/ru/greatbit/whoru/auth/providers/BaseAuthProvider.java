@@ -54,7 +54,7 @@ public abstract class BaseAuthProvider implements AuthProvider {
         final String login = emptyIfNull(request.getParameter(PARAM_LOGIN));
         final String password = emptyIfNull(request.getParameter(PARAM_PASSWORD));
         if (login.equals(adminLogin) && password.equals(adminPassword)){
-            Session adminSession = new Session().withIsAdmin(true).
+            Session adminSession = (Session) new Session().withIsAdmin(true).
                     withId(UUID.randomUUID().toString()).
                     withLogin(adminLogin).withName(adminLogin).
                     withPerson(
@@ -64,7 +64,9 @@ public abstract class BaseAuthProvider implements AuthProvider {
             response.addCookie(HttpUtils.createCookie(HttpUtils.SESSION_ID, adminSession.getId(), authDomain, sessionTtl));
             return adminSession;
         } else {
-            return authImpl(request, response);
+            Session session = authImpl(request, response);
+            response.addCookie(HttpUtils.createCookie(HttpUtils.SESSION_ID, session.getId(), authDomain, sessionTtl));
+            return session;
         }
     }
 
@@ -141,7 +143,7 @@ public abstract class BaseAuthProvider implements AuthProvider {
     }
 
     @Override
-    public Set<String> getAllGroups() {
+    public Set<String> getAllGroups(HttpServletRequest request) {
         return new HashSet<>();
     }
 }
