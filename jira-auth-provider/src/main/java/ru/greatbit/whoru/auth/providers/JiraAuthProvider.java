@@ -118,12 +118,18 @@ public class JiraAuthProvider extends BaseAuthProvider {
 
     @Override
     public Set<String> getAllUsers(HttpServletRequest request) {
-        return null;
+        return suggestUser(request, "");
     }
 
     @Override
     public Set<String> suggestUser(HttpServletRequest request, String literal) {
-        return null;
+        try {
+            return getCLient(request).getUsers(literal).execute().body().stream().
+                    map(JiraUser::getKey).
+                    collect(Collectors.toSet());
+        } catch (IOException e) {
+            return Collections.emptySet();
+        }
     }
 
     private String getLoginUrl(HttpServletRequest request){
