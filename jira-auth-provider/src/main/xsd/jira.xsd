@@ -49,4 +49,40 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="Group">
+        <xs:sequence>
+            <xs:element name="html" type="xs:string"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="labels" type="Label" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Label">
+        <xs:sequence>
+            <xs:element name="text" type="xs:string"/>
+            <xs:element name="title" type="xs:string"/>
+            <xs:element name="type" type="LabelType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="labelType" type="LabelType"/>
+    <xs:simpleType name="LabelType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ADMIN"/>
+            <xs:enumeration value="SINGLE"/>
+            <xs:enumeration value="MULTIPLE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="GroupsWrapper">
+        <xs:sequence>
+            <xs:element name="header" type="xs:string"/>
+            <xs:element name="total" type="xs:long"/>
+            <xs:element name="groups" type="Group" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+
+
 </xs:schema>

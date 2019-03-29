@@ -6,20 +6,21 @@ import ru.greatbit.whoru.auth.Person;
 import ru.greatbit.whoru.auth.RedirectResponse;
 import ru.greatbit.whoru.auth.Session;
 import ru.greatbit.whoru.auth.error.UnauthorizedException;
+import ru.greatbit.whoru.auth.providers.jira.Group;
 import ru.greatbit.whoru.auth.providers.jira.JiraUser;
-import ru.greatbit.whoru.auth.utils.HttpUtils;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toSet;
 import static org.springframework.util.StringUtils.isEmpty;
 import static ru.greatbit.utils.string.StringUtils.emptyIfNull;
 
@@ -40,13 +41,12 @@ public class JiraAuthProvider extends BaseAuthProvider {
 
     private Set<String> adminLoginsSet = new HashSet<>();
 
-    private final String JIRA_USER_GROUP = "Jira User";
 
     @PostConstruct
     private void postConstruct(){
         adminLoginsSet = Stream.of(emptyIfNull(adminLogins).split(",")).
                 map(String::trim).
-                collect(Collectors.toSet());
+                collect(toSet());
         if (!isEmpty(adminLogin)){
             adminLoginsSet.add(adminLogin);
         }
@@ -90,7 +90,7 @@ public class JiraAuthProvider extends BaseAuthProvider {
                         new Person().withActive(true).
                                 withId(jiraUser.getName()).
                                 withFirstName(jiraUser.getDisplayName()).
-                                withGroups(JIRA_USER_GROUP)
+                                withGroups(jiraUser.getGroups().getItems())
                     );
         } catch (IOException e) {
             throw new UnauthorizedException("Couldn't get users session from Jira", e);
@@ -108,9 +108,12 @@ public class JiraAuthProvider extends BaseAuthProvider {
 
     @Override
     public Set<String> suggestGroups(HttpServletRequest request, String literal) {
-        Set<String> searchResults = new HashSet<>();
-        searchResults.add(JIRA_USER_GROUP);
-        return searchResults;
+        try {
+            return getCLient(request).getGroups(literal).execute().body().getGroups().stream().
+                    map(Group::getName).collect(toSet());
+        } catch (IOException e) {
+            return Collections.emptySet();
+        }
     }
 
     @Override
@@ -133,7 +136,11 @@ public class JiraAuthProvider extends BaseAuthProvider {
     }
 
     private JiraUser getJiraUser(HttpServletRequest request) throws IOException {
+        return getCLient(request).getSelfUser().execute().body();
+    }
+
+    private JiraRestAuthClient getCLient(HttpServletRequest request){
         return  HttpClientBuilder.builder(jiraApiEndpoint, jiraApiTimeout, request).build().
-                create(JiraRestAuthClient.class).getSelfUser().execute().body();
+                create(JiraRestAuthClient.class);
     }
 }
