@@ -28,9 +28,9 @@
     </organization>
 
     <scm>
-        <url>git@github.com:azee/whoru.git</url>
-        <connection>git@github.com:azee/whoru.git</connection>
-        <developerConnection>git@github.com:azee/whoru.git</developerConnection>
+        <url>scm:git:git@github.com:azee/whoru.git</url>
+        <connection>scm:git:git@github.com:azee/whoru.git</connection>
+        <developerConnection>scm:git:git@github.com:azee/whoru.git</developerConnection>
     </scm>
 
     <licenses>
