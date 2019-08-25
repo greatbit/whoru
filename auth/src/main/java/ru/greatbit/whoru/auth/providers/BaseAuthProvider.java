@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static ru.greatbit.utils.string.StringUtils.emptyIfNull;
+import static ru.greatbit.whoru.auth.utils.HttpUtils.TOKEN_KEY;
 import static ru.greatbit.whoru.auth.utils.HttpUtils.getTokenValueFromHeaders;
 import static ru.greatbit.whoru.auth.utils.HttpUtils.isTokenAccessRequest;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -53,15 +54,20 @@ public abstract class BaseAuthProvider implements AuthProvider {
     public Session doAuth(HttpServletRequest request, HttpServletResponse response){
         final String login = emptyIfNull(request.getParameter(PARAM_LOGIN));
         final String password = emptyIfNull(request.getParameter(PARAM_PASSWORD));
-        if (login.equals(adminLogin) && password.equals(adminPassword)){
+        final String token = emptyIfNull(request.getHeader(TOKEN_KEY));
+        if ((login.equals(adminLogin) && password.equals(adminPassword)) || token.equals(adminToken)){
             Session adminSession = (Session) new Session().withIsAdmin(true).
-                    withId(UUID.randomUUID().toString()).
+                    withId(
+                            isEmpty(token) ? UUID.randomUUID().toString() : token
+                    ).
                     withLogin(adminLogin).withName(adminLogin).
                     withPerson(
                             new Person().withActive(true).withId(adminLogin).withFirstName(adminLogin)
                     );
             sessionProvider.addSession(adminSession);
-            response.addCookie(HttpUtils.createCookie(HttpUtils.SESSION_ID, adminSession.getId(), authDomain, sessionTtl));
+            if (response != null){
+                response.addCookie(HttpUtils.createCookie(HttpUtils.SESSION_ID, adminSession.getId(), authDomain, sessionTtl));
+            }
             return adminSession;
         } else {
             Session session = authImpl(request, response);
