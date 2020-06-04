@@ -47,6 +47,13 @@ public interface AuthProvider {
     RedirectResponse redirectNotAuthTo(HttpServletRequest request);
 
     /**
+     * Redirect to a URI with user creation form.
+     * @param request
+     * @return
+     */
+    RedirectResponse redirectCreateUserTo(HttpServletRequest request);
+
+    /**
      * Verify that username is still the same as the login within the session
      * @param request
      * @param login
