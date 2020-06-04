@@ -50,6 +50,12 @@ public abstract class BaseAuthProvider implements AuthProvider {
     @Value("${auth.admin.token}")
     protected String adminToken;
 
+    @Value("${auth.login.page.url:/login}")
+    protected String loginPageUrl;
+
+    @Value("${auth.create.user.page.url:/user/create}")
+    protected String createUserPageUrl;
+
     @Override
     public Session doAuth(HttpServletRequest request, HttpServletResponse response){
         final String login = emptyIfNull(request.getParameter(PARAM_LOGIN));
@@ -144,8 +150,13 @@ public abstract class BaseAuthProvider implements AuthProvider {
     }
 
     @Override
+    public RedirectResponse redirectCreateUserTo(HttpServletRequest request) {
+        return new RedirectResponse(createUserPageUrl, "retpath");
+    }
+
+    @Override
     public RedirectResponse redirectNotAuthTo(HttpServletRequest request) {
-        return new RedirectResponse("/login", "retpath");
+        return new RedirectResponse(loginPageUrl, "retpath");
     }
 
     @Override
