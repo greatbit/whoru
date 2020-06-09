@@ -61,6 +61,22 @@ public interface AuthProvider {
     RedirectResponse redirectViewAllUsersTo(HttpServletRequest request);
 
     /**
+     * Redirect to a URI where user can change password.
+     * @param request
+     * @return
+     */
+    RedirectResponse redirectChangePasswordTo(HttpServletRequest request);
+
+    /**
+     * Redirect to a URI where user can change password.
+     * @param session
+     * @param oldPassword
+     * @param newPassword
+     * @return
+     */
+    void changePassword(Session session, String oldPassword, String newPassword);
+
+    /**
      * Verify that username is still the same as the login within the session
      * @param request
      * @param login

@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static java.lang.String.format;
 import static ru.greatbit.utils.string.StringUtils.emptyIfNull;
 import static ru.greatbit.whoru.auth.utils.HttpUtils.TOKEN_KEY;
 import static ru.greatbit.whoru.auth.utils.HttpUtils.getTokenValueFromHeaders;
@@ -56,9 +57,11 @@ public abstract class BaseAuthProvider implements AuthProvider {
     @Value("${auth.create.user.page.url:/user/create}")
     protected String createUserPageUrl;
 
-
     @Value("${auth.all.users.page.url:/user}")
     protected String allUsersPageUrl;
+
+    @Value("${auth.change.password.page.url:/user/changepass}")
+    protected String changePasswordUrl;
 
     @Override
     public Session doAuth(HttpServletRequest request, HttpServletResponse response){
@@ -166,6 +169,36 @@ public abstract class BaseAuthProvider implements AuthProvider {
     @Override
     public RedirectResponse redirectViewAllUsersTo(HttpServletRequest request) {
         return new RedirectResponse(allUsersPageUrl, "retpath");
+    }
+
+    @Override
+    public RedirectResponse redirectChangePasswordTo(HttpServletRequest request) {
+        return new RedirectResponse(changePasswordUrl, "retpath");
+    }
+
+    @Override
+    public void doAuthByOnetimeToken(String token, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+    }
+
+    @Override
+    public void changePassword(Session session, String oldPassword, String newPassword) {
+        throw new UnsupportedOperationException(format("Change password function is not implemented in %s authentication provider", getClass()));
+    }
+
+    @Override
+    public Set<String> suggestGroups(HttpServletRequest request, String literal) {
+        return null;
+    }
+
+    @Override
+    public Set<String> getAllUsers(HttpServletRequest request) {
+        return null;
+    }
+
+    @Override
+    public Set<String> suggestUser(HttpServletRequest request, String literal) {
+        return null;
     }
 
     @Override
