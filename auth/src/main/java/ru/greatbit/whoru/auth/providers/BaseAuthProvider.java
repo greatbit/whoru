@@ -182,11 +182,6 @@ public abstract class BaseAuthProvider implements AuthProvider {
     }
 
     @Override
-    public void changePassword(Session session, String oldPassword, String newPassword) {
-        throw new UnsupportedOperationException(format("Change password function is not implemented in %s authentication provider", getClass()));
-    }
-
-    @Override
     public Set<String> suggestGroups(HttpServletRequest request, String literal) {
         return null;
     }
