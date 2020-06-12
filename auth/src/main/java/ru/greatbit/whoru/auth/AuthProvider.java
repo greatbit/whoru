@@ -54,6 +54,20 @@ public interface AuthProvider {
     RedirectResponse redirectCreateUserTo(HttpServletRequest request);
 
     /**
+     * Redirect to a URI with list of user.
+     * @param request
+     * @return
+     */
+    RedirectResponse redirectViewAllUsersTo(HttpServletRequest request);
+
+    /**
+     * Redirect to a URI where user can change password.
+     * @param request
+     * @return
+     */
+    RedirectResponse redirectChangePasswordTo(HttpServletRequest request);
+
+    /**
      * Verify that username is still the same as the login within the session
      * @param request
      * @param login
