@@ -31,10 +31,10 @@ public abstract class BaseAuthProvider implements AuthProvider {
     public static final String PARAM_LOGIN = "login";
     public static final String PARAM_PASSWORD = "password";
 
-    final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    SessionProvider sessionProvider;
+    protected SessionProvider sessionProvider;
 
     @Value("${auth.domain}")
     protected String authDomain;
