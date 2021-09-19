@@ -31,10 +31,10 @@ public abstract class BaseAuthProvider implements AuthProvider {
     public static final String PARAM_LOGIN = "login";
     public static final String PARAM_PASSWORD = "password";
 
-    final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    SessionProvider sessionProvider;
+    protected SessionProvider sessionProvider;
 
     @Value("${auth.domain}")
     protected String authDomain;
@@ -158,22 +158,22 @@ public abstract class BaseAuthProvider implements AuthProvider {
 
     @Override
     public RedirectResponse redirectCreateUserTo(HttpServletRequest request) {
-        return new RedirectResponse(createUserPageUrl, "retpath");
+        return new RedirectResponse(createUserPageUrl, "retpath", false);
     }
 
     @Override
     public RedirectResponse redirectNotAuthTo(HttpServletRequest request) {
-        return new RedirectResponse(loginPageUrl, "retpath");
+        return new RedirectResponse(loginPageUrl, "retpath", false);
     }
 
     @Override
     public RedirectResponse redirectViewAllUsersTo(HttpServletRequest request) {
-        return new RedirectResponse(allUsersPageUrl, "retpath");
+        return new RedirectResponse(allUsersPageUrl, "retpath", false);
     }
 
     @Override
     public RedirectResponse redirectChangePasswordTo(HttpServletRequest request) {
-        return new RedirectResponse(changePasswordUrl, "retpath");
+        return new RedirectResponse(changePasswordUrl, "retpath", false);
     }
 
     @Override
