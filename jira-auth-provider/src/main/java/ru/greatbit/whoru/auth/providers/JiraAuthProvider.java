@@ -65,7 +65,7 @@ public class JiraAuthProvider extends BaseAuthProvider {
 
     @Override
     public RedirectResponse redirectNotAuthTo(HttpServletRequest request) {
-        return new RedirectResponse(getLoginUrl(request), "retpath");
+        return new RedirectResponse(getLoginUrl(request), "retpath", false);
     }
 
     @Override

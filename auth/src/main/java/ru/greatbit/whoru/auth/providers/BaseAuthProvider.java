@@ -158,22 +158,22 @@ public abstract class BaseAuthProvider implements AuthProvider {
 
     @Override
     public RedirectResponse redirectCreateUserTo(HttpServletRequest request) {
-        return new RedirectResponse(createUserPageUrl, "retpath");
+        return new RedirectResponse(createUserPageUrl, "retpath", false);
     }
 
     @Override
     public RedirectResponse redirectNotAuthTo(HttpServletRequest request) {
-        return new RedirectResponse(loginPageUrl, "retpath");
+        return new RedirectResponse(loginPageUrl, "retpath", false);
     }
 
     @Override
     public RedirectResponse redirectViewAllUsersTo(HttpServletRequest request) {
-        return new RedirectResponse(allUsersPageUrl, "retpath");
+        return new RedirectResponse(allUsersPageUrl, "retpath", false);
     }
 
     @Override
     public RedirectResponse redirectChangePasswordTo(HttpServletRequest request) {
-        return new RedirectResponse(changePasswordUrl, "retpath");
+        return new RedirectResponse(changePasswordUrl, "retpath", false);
     }
 
     @Override

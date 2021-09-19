@@ -1,13 +1,14 @@
 package ru.greatbit.whoru.auth.providers;
 
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import ru.greatbit.whoru.auth.Person;
 import ru.greatbit.whoru.auth.RedirectResponse;
 import ru.greatbit.whoru.auth.Session;
 import ru.greatbit.whoru.auth.error.UnauthorizedException;
+import ru.greatbit.whoru.auth.utils.HttpUtils;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
@@ -18,18 +19,18 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.GetUserRequ
 import software.amazon.awssdk.services.cognitoidentityprovider.model.GetUserResponse;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
-import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toSet;
 import static org.springframework.util.StringUtils.isEmpty;
 import static ru.greatbit.utils.string.StringUtils.emptyIfNull;
+import static ru.greatbit.whoru.auth.utils.HttpUtils.isTokenAccessRequest;
 
-
+@Service
 public class CognitoAuthProvider extends BaseAuthProvider {
 
     @Value("${cognito.login.url}")
@@ -44,19 +45,23 @@ public class CognitoAuthProvider extends BaseAuthProvider {
     @Value("${aws.cognito.region}")
     private String awsCognitoRegion;
 
-//    private AmazonCognitoIdentity cognitoIdentityClient;
+    @Value("${aws.cognito.oauth.endpoint}")
+    private String cognitoOauthEndpoint;
+
+    @Value("${aws.cognito.client.id}")
+    private String cognitoClientId;
+
+    @Value("${aws.cognito.redirect.url}")
+    private String cognitoRedirectUrl;
+
+    private final long OAUTH_API_TIMEOUT = 30000;
+
+    private final String GRANT_TYPE = "authorization_code";
 
     private CognitoIdentityProviderClient cognitoIdentityProviderClient;
 
     @PostConstruct
     private void postConstruct(){
-//        BasicAWSCredentials credentials = new BasicAWSCredentials(awsCognitoAccessKey, awsCognitoSecretKey);
-//        cognitoIdentityClient = AmazonCognitoIdentityClientBuilder.standard()
-//                .withCredentials(new AWSStaticCredentialsProvider(credentials))
-//                .withRegion(awsCognitoRegion)
-//                .build();
-
-
         AwsCredentials awsCredentials = AwsBasicCredentials.create(awsCognitoAccessKey, awsCognitoSecretKey);
         AwsCredentialsProvider credentialsProvider = StaticCredentialsProvider.create(awsCredentials);
         cognitoIdentityProviderClient = CognitoIdentityProviderClient.builder()
@@ -67,18 +72,46 @@ public class CognitoAuthProvider extends BaseAuthProvider {
 
     @Override
     public Session authImpl(HttpServletRequest request, HttpServletResponse response) {
-//        String authorizationCode = request.getParameter("code");
-//        String accessToken = getAccessToken(authorizationCode);
+        if (isTokenAccessRequest(request)) {
+            return authByToken(request, response);
+        }
 
-//        DescribeIdentityRequest describeIdentityRequest = new DescribeIdentityRequest();
-//        describeIdentityRequest.setIdentityId();
-//        cognitoIdentityClient.describeIdentity()
+        try {
+            Cookie sid = HttpUtils.findCookie(request, HttpUtils.SESSION_ID);
+            if (sid == null || !sessionProvider.sessionExists(sid.getValue())
+                    || !sessionProvider.getSessionById(sid.getValue()).getPerson().getLogin().equals(request.getParameter(PARAM_LOGIN))) {
+                logger.info("No session found. Auth by login/password ip={}", HttpUtils.getRemoteAddr(request, IP_HEADER));
+                return authWithJwtToken(request, response);
+            } else {
+                logger.info("Updating session for user with ip={}", HttpUtils.getRemoteAddr(request, IP_HEADER));
+                response.addCookie(HttpUtils.createCookie(HttpUtils.SESSION_ID, sid.getValue(), authDomain, sessionTtl));
+            }
+            sendRedirect(request, response);
+            return sessionProvider.getSessionById(sid.getValue());
+        } catch (UnauthorizedException e){
+            throw e;
+        } catch (Exception e){
+            logger.error("Can't authenticate user", e);
+            throw new UnauthorizedException(e);
+        }
+    }
+
+    private Session authByToken(HttpServletRequest request, HttpServletResponse response) {
+        throw new UnauthorizedException("Authorisation by token is not supporter by cognito auth provider");
+    }
 
 
+    public Session authWithJwtToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String authorizationCode = request.getParameter("code");
 
-        String idToken = request.getParameter("id_token");
-        String accessToken = request.getParameter("access_token");
+        CognitoTokensResponse tokenResponse = getOauthClient().getOauthTokens(GRANT_TYPE, cognitoClientId, authorizationCode,
+                cognitoRedirectUrl).execute().body();
+        if (tokenResponse == null){
+            throw new UnauthorizedException("Unable to retrieve tokens by authorization code");
+        }
 
+        String idToken = tokenResponse.getId_token();
+        String accessToken = tokenResponse.getAccess_token();
 
         if (isEmpty(idToken) || isEmpty(accessToken)){
             try {
@@ -89,7 +122,7 @@ public class CognitoAuthProvider extends BaseAuthProvider {
             }
         }
 
-        GetUserRequest getUserRequest = GetUserRequest.builder().accessToken(idToken).build();
+        GetUserRequest getUserRequest = GetUserRequest.builder().accessToken(accessToken).build();
         GetUserResponse userResponse = cognitoIdentityProviderClient.getUser(getUserRequest);
         if (userResponse == null){
             try {
@@ -103,8 +136,7 @@ public class CognitoAuthProvider extends BaseAuthProvider {
         DecodedJWT jwt = JWT.decode(idToken);
         jwt.getClaims();
 
-
-        return (Session) new Session()
+        Session session = (Session) new Session()
                 .withId(jwt.getClaims().get("jti").asString())
                 .withName(getName(jwt))
                 .withLogin(jwt.getClaims().get("email").asString())
@@ -115,6 +147,9 @@ public class CognitoAuthProvider extends BaseAuthProvider {
                                 .withFirstName(jwt.getClaims().get("given_name").asString())
                                 .withLastName(jwt.getClaims().get("family_name").asString())
                 );
+        sessionProvider.addSession(session);
+        response.addCookie(HttpUtils.createCookie(HttpUtils.SESSION_ID, session.getId(), authDomain, sessionTtl));
+        return session;
     }
 
     private String getName(DecodedJWT jwt){
@@ -128,19 +163,12 @@ public class CognitoAuthProvider extends BaseAuthProvider {
 
     @Override
     public RedirectResponse redirectNotAuthTo(HttpServletRequest request) {
-        return new RedirectResponse(getLoginUrl(request), "retpath");
+        return new RedirectResponse(getLoginUrl(request), "retpath", true);
     }
 
     @Override
     public boolean isAuthenticated(HttpServletRequest request) throws UnauthorizedException {
         return getCognitoUser(request) != null;
-    }
-
-    @Override
-    public Session getSession(HttpServletRequest request) throws UnauthorizedException {
-        // ToDo: Get session id cookie then
-        // ToDo - get session from session provider or cognito
-        return null;
     }
 
     @Override
@@ -150,22 +178,18 @@ public class CognitoAuthProvider extends BaseAuthProvider {
 
     @Override
     public Set<String> suggestGroups(HttpServletRequest request, String literal) {
-        // ToDO: implement
         return Collections.emptySet();
     }
 
     @Override
     public Set<String> getAllUsers(HttpServletRequest request) {
-        // ToDO: implement
         return Collections.emptySet();
     }
 
     @Override
     public Set<String> suggestUser(HttpServletRequest request, String literal) {
-        // ToDO: implement
         return Collections.emptySet();
     }
-
 
     private Object getCognitoUser(HttpServletRequest request) {
         return false;
@@ -175,4 +199,8 @@ public class CognitoAuthProvider extends BaseAuthProvider {
         return cognitoLoginUrl;
     }
 
+    private CognitoOauthClient getOauthClient(){
+        return  HttpClientBuilder.builder(cognitoOauthEndpoint, OAUTH_API_TIMEOUT).build().
+                create(CognitoOauthClient.class);
+    }
 }

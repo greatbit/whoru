@@ -35,6 +35,7 @@
         <xs:sequence>
             <xs:element name="url" type="xs:string"/>
             <xs:element name="retpathParamName" type="xs:string"/>
+            <xs:element name="strictUrl" type="xs:boolean"/>
         </xs:sequence>
     </xs:complexType>
 
