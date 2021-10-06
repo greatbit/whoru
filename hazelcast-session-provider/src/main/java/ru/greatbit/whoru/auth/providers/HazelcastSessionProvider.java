@@ -18,7 +18,7 @@ import java.util.Map;
 @Component
 public class HazelcastSessionProvider implements SessionProvider {
 
-    private final static String MAP_NAME = "whoru_sessions";
+    private final static String SESSION_MAP_NAME = "whoru_sessions";
 
     @Autowired
     private HazelcastInstance instance;
@@ -53,7 +53,7 @@ public class HazelcastSessionProvider implements SessionProvider {
     }
 
     protected IMap<String, Session> getMap() {
-        return instance.getMap(MAP_NAME);
+        return instance.getMap(SESSION_MAP_NAME);
     }
 
     @Override
@@ -74,5 +74,13 @@ public class HazelcastSessionProvider implements SessionProvider {
     @Override
     public Map<String, Session> getAllSessions() {
         return getMap();
+    }
+
+    public static String getSessionMapName() {
+        return SESSION_MAP_NAME;
+    }
+
+    public HazelcastInstance getInstance() {
+        return instance;
     }
 }
