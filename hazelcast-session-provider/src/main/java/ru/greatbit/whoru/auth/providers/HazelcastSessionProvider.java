@@ -52,7 +52,7 @@ public class HazelcastSessionProvider implements SessionProvider {
         return getMap().containsKey(sessionId);
     }
 
-    private IMap<String, Session> getMap() {
+    protected IMap<String, Session> getMap() {
         return instance.getMap(MAP_NAME);
     }
 
