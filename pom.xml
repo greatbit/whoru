@@ -10,7 +10,7 @@
 
     <groupId>ru.greatbit.whoru</groupId>
     <artifactId>whoru-all</artifactId>
-    <version>1.8-SNAPSHOT</version>
+    <version>1.8</version>
     <modules>
         <module>auth</module>
         <module>jaxrsws-auth</module>
