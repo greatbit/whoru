@@ -1,10 +1,10 @@
 package ru.greatbit.whoru.auth.providers;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-import com.hazelcast.query.EntryObject;
+import com.hazelcast.map.IMap;
 import com.hazelcast.query.Predicate;
 import com.hazelcast.query.PredicateBuilder;
+import com.hazelcast.query.Predicates;
 import ru.greatbit.whoru.auth.Session;
 import ru.greatbit.whoru.auth.SessionProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +58,7 @@ public class HazelcastSessionProvider implements SessionProvider {
 
     @Override
     public Collection<Session> getSessionsByPersonsLogin(String ... personsLogin) {
-        EntryObject entryObject = new PredicateBuilder().getEntryObject();
+        PredicateBuilder.EntryObject entryObject = Predicates.newPredicateBuilder().getEntryObject();
         Predicate predicate = Arrays.stream(personsLogin)
                 .map(login -> entryObject.get("person.login").equal(login))
                 .reduce(PredicateBuilder::or).orElse(null);
