@@ -8,14 +8,14 @@
            jaxb:version="2.1"
            elementFormDefault="qualified">
 
-<!--    <xs:element name="cognitoTokensResponse" type="CognitoTokensResponse"/>-->
-<!--    <xs:complexType name="CognitoTokensResponse">-->
-<!--        <xs:sequence>-->
-<!--            <xs:element name="id_token" type="xs:string"/>-->
-<!--            <xs:element name="access_token" type="xs:string"/>-->
-<!--            <xs:element name="expires_in" type="xs:long"/>-->
-<!--            <xs:element name="token_type" type="xs:string"/>-->
-<!--        </xs:sequence>-->
-<!--    </xs:complexType>-->
+    <xs:element name="cognitoTokensResponse" type="CognitoTokensResponse"/>
+    <xs:complexType name="CognitoTokensResponse">
+        <xs:sequence>
+            <xs:element name="id_token" type="xs:string"/>
+            <xs:element name="access_token" type="xs:string"/>
+            <xs:element name="expires_in" type="xs:long"/>
+            <xs:element name="token_type" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
 
 </xs:schema>
