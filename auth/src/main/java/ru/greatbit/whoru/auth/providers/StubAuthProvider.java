@@ -7,7 +7,6 @@ import ru.greatbit.whoru.auth.SessionProvider;
 import ru.greatbit.whoru.auth.error.UnauthorizedException;
 import ru.greatbit.whoru.auth.utils.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -67,7 +66,7 @@ public class StubAuthProvider extends BaseAuthProvider {
 
     @Override
     public void doAuthByOnetimeToken(String token, HttpServletRequest request, HttpServletResponse response) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
