@@ -62,6 +62,11 @@ public class CognitoAuthProvider extends BaseAuthProvider {
 
     @PostConstruct
     private void postConstruct(){
+        if (isEmpty(awsCognitoAccessKey) || isEmpty(awsCognitoSecretKey)){
+            logger.warn("Access and secret key are not set for Cognito Auth Provider. " +
+                    "In case you are using a different provider - this warning can be ignored");
+            return;
+        }
         AwsCredentials awsCredentials = AwsBasicCredentials.create(awsCognitoAccessKey, awsCognitoSecretKey);
         AwsCredentialsProvider credentialsProvider = StaticCredentialsProvider.create(awsCredentials);
         cognitoIdentityProviderClient = CognitoIdentityProviderClient.builder()
